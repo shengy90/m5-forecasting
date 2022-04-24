@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 import numpy as np
 
-from tests.bin.fixtures import *
+from tests.fixtures.fixtures import *
 
 
 def test_time_pred_cols(dummy_rmsse):

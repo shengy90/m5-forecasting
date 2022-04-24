@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from tests.bin.fixtures import *
+from tests.fixtures.fixtures import *
 
 
 def test_dummy_wrmsse(dummy_wrmsse):
