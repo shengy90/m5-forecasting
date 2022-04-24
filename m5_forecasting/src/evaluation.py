@@ -9,7 +9,7 @@ class BaseEvaluator(ABC):
         horizon: int,
         train_period: int
         ) -> None:
-        """_summary_
+        """Base Evaluator Class
         Args:
             df_pred (pd.DataFrame): Pandas Dataframe containing predicted values
             df_eval (pd.DataFrame): Pandas Dataframe containing real values
@@ -19,10 +19,27 @@ class BaseEvaluator(ABC):
         self.df_pred = df_pred
         self.df_eval = df_eval
         self.horizon = horizon
+        self.train_period = train_period
+        self.time_cols = [f'd_{i+1}' for i in range(self.train_period)] # +1 because python is 0 indexed
+        self.pred_cols = [f'd_{train_period + i + 1}' for i in range(horizon)] # +1 because python is 0 indexed
         return None
 
 
-class WRMSSE(BaseEvaluator):
+class RMSSE(BaseEvaluator):
     def __init__(self, df_pred, df_eval, horizon, train_period) -> None:
         super().__init__(df_pred, df_eval, horizon, train_period)
 
+
+    def _get_non_zero_periods(self, train_periods: np.array) -> np.array:
+        first_occurrence = (train_periods!=0).argmax(axis=1)
+        return self.train_period - first_occurrence
+
+    def calculate_denominator(self) -> np.array:
+        train_periods = self.df_pred[self.time_cols].copy().to_numpy()
+        nonzero_periods = self._get_non_zero_periods(train_periods)
+
+        previous_values = np.roll(train_periods, 1)[:, 1:]
+        current_values = train_periods[:, 1:]
+        sq_err = np.square(current_values - previous_values)
+        denominator = np.sum(sq_err, axis=1) / nonzero_periods
+        return denominator
