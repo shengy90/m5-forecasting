@@ -63,3 +63,17 @@ def test_numerator(dummy_rmsse):
     dummy_rmsse.df_eval = dummy_rmsse.df_pred + 1
     numerator_test2 = dummy_rmsse.calculate_numerator()
     assert (numerator_test2 == np.array([1., 1., 1.])).all()
+
+
+def test_rmsse(dummy_rmsse):
+    """Test that rmsse is calculated correctly
+    """
+    rmsse_correct = [0., 0., 0.]
+    rmsse_test = dummy_rmsse.rmsse
+    assert (rmsse_correct == rmsse_test).all()
+
+    dummy_rmsse.df_eval = dummy_rmsse.df_pred + 1
+    new_numer = dummy_rmsse.calculate_numerator()
+    new_denom = dummy_rmsse.calculate_denominator()
+    new_rmsse = np.round(dummy_rmsse.calculate_rmsse(new_numer, new_denom), 3)
+    assert (new_rmsse == np.array([0.485, 0.707, 1.])).all()

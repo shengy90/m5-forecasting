@@ -28,6 +28,9 @@ class BaseEvaluator(ABC):
 class RMSSE(BaseEvaluator):
     def __init__(self, df_pred, df_eval, horizon, train_period) -> None:
         super().__init__(df_pred, df_eval, horizon, train_period)
+        self.numer = self.calculate_numerator()
+        self.denom = self.calculate_denominator()
+        self.rmsse = self.calculate_rmsse(self.numer, self.denom)
 
 
     def _get_non_zero_periods(self, train_periods: np.array) -> np.array:
@@ -50,3 +53,7 @@ class RMSSE(BaseEvaluator):
         sq_err = np.square(y_hat - y)
         numerator = np.sum(sq_err, axis=1) / self.horizon
         return numerator
+
+    def calculate_rmsse(self, numer, denom) -> float:
+        rmsse = np.sqrt(numer/denom)
+        return rmsse
