@@ -43,3 +43,10 @@ class RMSSE(BaseEvaluator):
         sq_err = np.square(current_values - previous_values)
         denominator = np.sum(sq_err, axis=1) / nonzero_periods
         return denominator
+
+    def calculate_numerator(self) -> np.array:
+        y_hat = self.df_pred[self.pred_cols].copy().to_numpy()
+        y = self.df_eval[self.pred_cols].copy().to_numpy()
+        sq_err = np.square(y_hat - y)
+        numerator = np.sum(sq_err, axis=1) / self.horizon
+        return numerator
