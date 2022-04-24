@@ -27,8 +27,7 @@ def test_denominator(dummy_rmsse):
     """Test that denominator is calculated correctly
     """
     denominator_correct = [4.25, 2, 1]
-    denominator_test = dummy_rmsse.calculate_denominator()
-    assert (denominator_correct == denominator_test).all()
+    assert (dummy_rmsse.denom == denominator_correct).all()
 
 
 def test_numerator(dummy_rmsse):
@@ -36,7 +35,7 @@ def test_numerator(dummy_rmsse):
     """
     numerator_correct = [0., 0., 0.]
     numerator_test = dummy_rmsse.calculate_numerator()
-    assert (numerator_correct == numerator_test).all()
+    assert (dummy_rmsse.numer == numerator_correct).all()
 
     dummy_rmsse.df_eval = dummy_rmsse.df_pred + 1
     numerator_test2 = dummy_rmsse.calculate_numerator()
