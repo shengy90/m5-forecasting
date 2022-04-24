@@ -57,3 +57,9 @@ class RMSSE(BaseEvaluator):
     def calculate_rmsse(self, numer, denom) -> float:
         rmsse = np.sqrt(numer/denom)
         return rmsse
+
+
+class WRMSSE(RMSSE):
+    def __init__(self, df_pred, df_eval, horizon, train_period, df_weights):
+        super().__init__(df_pred, df_eval, horizon, train_period)
+        self.df_weights = df_weights
