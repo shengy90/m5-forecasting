@@ -4,7 +4,14 @@ import numpy as np
 from tests.fixtures.fixtures import *
 
 
-def test_dummy_wrmsse(dummy_wrmsse):
-    assert dummy_wrmsse.df_weights == 1
-    assert (dummy_wrmsse.rmsse == np.array([0., 0., 0.])).all()
-    assert (dummy_wrmsse.denom == np.array([4.25, 2, 1])).all()
+def test_dummy_wrmsse(dummy_wrmsse, dummy_weights):
+    weights = dummy_weights['weights'].values
+    rmsse = np.array([0.485, 0.707, 1.])
+
+    dummy_wrmsse.df_eval = dummy_wrmsse.df_pred + 1
+    dummy_wrmsse.numer = dummy_wrmsse.calculate_numerator()
+    dummy_wrmsse.denom = dummy_wrmsse.calculate_denominator()
+    dummy_wrmsse.rmsse = np.round(dummy_wrmsse.calculate_rmsse(), 3)
+    weighted_rmsse = np.round(dummy_wrmsse.calculate_wrmsse(), 3)
+    correct_wrmsse = np.round(np.multiply(weights, rmsse), 3)
+    assert (weighted_rmsse == correct_wrmsse).all()

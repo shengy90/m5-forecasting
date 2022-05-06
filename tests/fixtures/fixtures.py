@@ -20,6 +20,21 @@ def dummy_pred():
 
 
 @pytest.fixture
+def dummy_weights():
+    row1 = [0.1]
+    row2 = [0.4]
+    row3 = [0.5]
+
+    df = pd.DataFrame(
+        np.array([row1, row2, row3]),
+        columns = ['weights']
+    )
+
+    df.index = ['A', 'B', 'C']
+    return df
+
+
+@pytest.fixture
 def dummy_rmsse(dummy_pred):
     horizon = 3
     train_period = 10
@@ -28,8 +43,8 @@ def dummy_rmsse(dummy_pred):
 
 
 @pytest.fixture
-def dummy_wrmsse(dummy_pred):
+def dummy_wrmsse(dummy_pred, dummy_weights):
     horizon = 3
     train_period = 10
-    evaluator = WRMSSE(dummy_pred, dummy_pred, horizon, train_period, df_weights=1)
+    evaluator = WRMSSE(dummy_pred, dummy_pred, horizon, train_period, df_weights=dummy_weights)
     return evaluator
