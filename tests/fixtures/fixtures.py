@@ -1,3 +1,6 @@
+from pathlib import Path
+
+import os
 import pytest
 import pandas as pd
 import numpy as np
@@ -5,6 +8,9 @@ import numpy as np
 from m5_forecasting.src.evaluation import RMSSE, WRMSSE
 from m5_forecasting.src.forecasters import naive_forecaster
 
+CURRENT_FILE = os.path.realpath(__file__)
+TEST_DIR = str(Path(CURRENT_FILE).parent.parent)
+ROOT_DIR = str(Path(TEST_DIR).parent)
 
 HORIZON = 3
 TRAIN_PERIOD = 10
@@ -76,3 +82,23 @@ def dummy_prices():
         df = pd.concat([df, df1])
 
     return df
+
+
+@pytest.fixture
+def dummy_pred_with_ids(dummy_pred):
+    id_vals = ['A', 'B', 'C']
+    dummy_pred['id'] = id_vals
+    dummy_pred['item_id'] = id_vals
+    dummy_pred['state_id'] = id_vals
+    dummy_pred['store_id'] = id_vals
+    dummy_pred['cat_id'] = id_vals
+    dummy_pred['dept_id'] = id_vals
+    return dummy_pred
+
+
+@pytest.fixture
+def dummy_pred_weights():    
+    csv_file_path = os.path.join(ROOT_DIR, 'bin', 'dummy_pred_weights.csv')
+    df_pred = pd.read_csv(csv_file_path)
+    assert len(df_pred) == 30490
+    return df_pred

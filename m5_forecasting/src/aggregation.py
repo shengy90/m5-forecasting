@@ -1,7 +1,7 @@
-from ast import List
-from os import listdir
 import pandas as pd
 import numpy as np
+
+from m5_forecasting.definitions import level_dict, series_dict
 
 
 def calculate_sales(
@@ -31,3 +31,19 @@ def calculate_sales(
     df_sales['sales'] = df_sales['volume'] * df_sales['sell_price']
     df_sales = df_sales.groupby(id_cols)['sales'].sum().reset_index()
     return df_sales
+
+
+def calculate_hierarchy(df_pred: pd.DataFrame, groupby_cols: list, pred_cols: list):
+    val_cols = pred_cols + ['sales']
+    if groupby_cols is not None:
+        df_out = df_pred.groupby(groupby_cols)[val_cols].sum().reset_index()
+    else:
+        df_out = pd.DataFrame(df_pred[val_cols].sum()).T
+    return df_out
+
+
+def calculate_weights(df_pred: pd.DataFrame, groupby_cols: list, pred_cols: list):
+    df_hierarchy = calculate_hierarchy(df_pred, groupby_cols, pred_cols)
+    total_sales = df_hierarchy['sales'].sum()
+    df_hierarchy['weights'] = df_hierarchy['sales'] / total_sales
+    return df_hierarchy
