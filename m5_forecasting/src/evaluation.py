@@ -110,7 +110,6 @@ class WRMSSE(RMSSE):
 
     def calculate_wrmsse(self):
         weights = self.df_weights['weights'].values
-        assert np.sum(weights) == 1
         assert weights.shape == self.rmsse.shape
         weigted_rmsse = np.multiply(weights, self.rmsse)
         return weigted_rmsse

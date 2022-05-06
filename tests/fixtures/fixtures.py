@@ -3,6 +3,11 @@ import pandas as pd
 import numpy as np
 
 from m5_forecasting.src.evaluation import RMSSE, WRMSSE
+from m5_forecasting.src.forecasters import naive_forecaster
+
+
+HORIZON = 3
+TRAIN_PERIOD = 10
 
 @pytest.fixture
 def dummy_pred():
@@ -36,15 +41,17 @@ def dummy_weights():
 
 @pytest.fixture
 def dummy_rmsse(dummy_pred):
-    horizon = 3
-    train_period = 10
-    evaluator = RMSSE(dummy_pred, dummy_pred, horizon, train_period)
+    evaluator = RMSSE(dummy_pred, dummy_pred, HORIZON, TRAIN_PERIOD)
     return evaluator
 
 
 @pytest.fixture
 def dummy_wrmsse(dummy_pred, dummy_weights):
-    horizon = 3
-    train_period = 10
-    evaluator = WRMSSE(dummy_pred, dummy_pred, horizon, train_period, df_weights=dummy_weights)
+    evaluator = WRMSSE(dummy_pred, dummy_pred, HORIZON, TRAIN_PERIOD, df_weights=dummy_weights)
     return evaluator
+
+
+@pytest.fixture
+def dummy_naive_forecaster(dummy_pred):
+    forecaster = naive_forecaster.NaiveForecaster(dummy_pred, HORIZON, TRAIN_PERIOD)
+    return forecaster
