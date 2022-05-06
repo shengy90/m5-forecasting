@@ -55,3 +55,24 @@ def dummy_wrmsse(dummy_pred, dummy_weights):
 def dummy_naive_forecaster(dummy_pred):
     forecaster = naive_forecaster.NaiveForecaster(dummy_pred, HORIZON, TRAIN_PERIOD)
     return forecaster
+
+
+@pytest.fixture
+def dummy_prices():
+    df = pd.DataFrame()
+    df1 = pd.DataFrame()
+    sell_price_dicts = {
+        'A': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        'B': [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        'C': [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+    }
+    period_ids = [f'd_{i+1}' for i in range(len(sell_price_dicts['A']))]
+
+    for idx in sell_price_dicts:
+        df1['sell_price'] = sell_price_dicts[idx]
+        df1['item_id'] = idx
+        df1['store_id'] = idx
+        df1['period'] = period_ids
+        df = pd.concat([df, df1])
+
+    return df
