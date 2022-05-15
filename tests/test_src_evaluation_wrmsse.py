@@ -2,7 +2,9 @@ import pandas as pd
 import numpy as np
 
 from tests.fixtures.fixtures import *
+from m5_forecasting.src.aggregation import calculate_sales
 
+DUMMY_PRED_COLS = ['d_11', 'd_12', 'd_13']
 
 def test_dummy_wrmsse(dummy_wrmsse, dummy_weights):
     weights = dummy_weights['weights'].values

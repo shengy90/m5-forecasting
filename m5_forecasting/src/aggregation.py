@@ -4,11 +4,7 @@ import numpy as np
 from m5_forecasting.definitions import level_dict, series_dict
 
 
-def calculate_sales(
-    df_prices: pd.DataFrame, 
-    df_actuals: pd.DataFrame,
-    pred_cols: list
-    ) -> pd.DataFrame:
+def calculate_sales(df_prices: pd.DataFrame, df_actuals: pd.DataFrame, pred_cols: list) -> pd.DataFrame:
     """Function to calculate sales over the evaluation period
 
     Args:
@@ -33,7 +29,7 @@ def calculate_sales(
     return df_sales
 
 
-def calculate_hierarchy(df_pred: pd.DataFrame, groupby_cols: list, pred_cols: list):
+def calculate_hierarchy(df_pred: pd.DataFrame, groupby_cols: list, pred_cols: list) -> pd.DataFrame:
     val_cols = pred_cols + ['sales']
     if groupby_cols is not None:
         df_out = df_pred.groupby(groupby_cols)[val_cols].sum().reset_index()
@@ -42,8 +38,12 @@ def calculate_hierarchy(df_pred: pd.DataFrame, groupby_cols: list, pred_cols: li
     return df_out
 
 
-def calculate_weights(df_pred: pd.DataFrame, groupby_cols: list, pred_cols: list):
-    df_hierarchy = calculate_hierarchy(df_pred, groupby_cols, pred_cols)
+def calculate_weights(df_pred: pd.DataFrame, df_prices:pd.DataFrame, groupby_cols: list, pred_cols: list) -> pd.DataFrame:
+    
+    df_sales = calculate_sales(df_prices, df_pred, pred_cols)
+    df_pred_weights = df_pred.merge(df_sales[['id','sales']], on='id', how='left')
+    df_hierarchy = calculate_hierarchy(df_pred_weights, groupby_cols, pred_cols)
+
     total_sales = df_hierarchy['sales'].sum()
     df_hierarchy['weights'] = df_hierarchy['sales'] / total_sales
     return df_hierarchy
